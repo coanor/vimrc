@@ -47,7 +47,6 @@
 set history=500
 
 " Enable filetype plugins
-filetype plugin on
 filetype indent on
 
 " Set to auto read when a file is changed from the outside
@@ -65,6 +64,18 @@ nmap <leader>w :w!<cr>
 " (useful for handling the permission-denied error)
 command W w !sudo tee % > /dev/null
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => golang settings
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+call plug#begin()
+Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+call plug#end()
+
+" disable syntax check, it takes long time for golang to check
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+nnoremap <C-w>E :SyntasticCheck<CR> :SyntasticToggleMode<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
@@ -187,14 +198,20 @@ set noswapfile
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use spaces instead of tabs
-set expandtab
+set noexpandtab
+
+" Show line number
+set nu
+
+" fold code block
+set foldmethod=indent
 
 " Be smart when using tabs ;)
-set smarttab
+"set smarttab
 
 " 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
 
 " Linebreak on 500 characters
 set lbr
@@ -202,7 +219,7 @@ set tw=500
 
 set ai "Auto indent
 set si "Smart indent
-set wrap "Wrap lines
+set nowrap "do not Wrap lines
 
 
 """"""""""""""""""""""""""""""
@@ -396,3 +413,44 @@ function! VisualSelection(direction, extra_filter) range
     let @/ = l:pattern
     let @" = l:saved_reg
 endfunction
+
+" Nerd tree
+map <C-n> :NERDTreeToggle<CR>
+
+" TAB auto-completion
+let g:pumselect = 0
+inoremap <expr> <TAB> MaySelect()
+
+function MaySelect()
+	if (pumvisible())
+		let g:pumselect = 1
+		return "\<DOWN>"
+	endif
+	return "\<TAB>"
+endfunc
+
+inoremap <expr> <Space> MayComplete()
+
+function MayComplete()
+	if (pumvisible() && g:pumselect)
+		let g:pumselect = 1
+		return "\<CR>"
+	endif
+	return "\<Space>"
+endfunc
+
+" settings among different projects
+function! SetupEnvironment()
+	let l:path = expand('%:p')
+	if l:path =~ '/Users/go/src/csosagent'
+	elseif l:path =~ '/Users/coanor/git/csos'
+		setlocal ts=2 sw=2
+		set noexpandtab
+		set listchars=tab:\|\ 
+		set list
+		"hi NonText ctermfg=7 guifg=gray
+		"hi SpecialKey ctermfg=7 guifg=gray
+		filetype plugin off " disable replace \t as 4 space
+	endif
+endfunction
+autocmd! BufReadPost,BufNewFile * call SetupEnvironment()
