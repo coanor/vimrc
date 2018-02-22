@@ -442,8 +442,8 @@ endfunc
 " settings among different projects
 function! SetupEnvironment()
 	let l:path = expand('%:p')
-	if l:path =~ '/Users/go/src/csosagent'
-	elseif l:path =~ '/Users/coanor/git/csos' || l:path =~ '/Users/coanor/git/itos'
+	if l:path =~ '/root/go/src/itos'
+	elseif l:path =~ '/root/git/csos'
 		setlocal ts=2 sw=2
 		set noexpandtab
 		set listchars=tab:\|\ 
