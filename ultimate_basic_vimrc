@@ -67,6 +67,7 @@ command W w !sudo tee % > /dev/null
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => golang settings
+" install: curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
 call plug#begin()
 Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
@@ -221,6 +222,12 @@ set ai "Auto indent
 set si "Smart indent
 set nowrap "do not Wrap lines
 
+" set wrap for tex file
+augroup WrapLineInTeXFile
+	autocmd!
+	autocmd FileType tex setlocal wrap
+augroup END
+
 
 """"""""""""""""""""""""""""""
 " => Visual mode related
@@ -246,6 +253,11 @@ map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
+
+noremap <silent> k gk
+noremap <silent> j gj
+noremap <silent> 0 g0
+noremap <silent> $ g$
 
 " Close the current buffer
 map <leader>bd :Bclose<cr>:tabclose<cr>gT
@@ -457,6 +469,7 @@ autocmd! BufReadPost,BufNewFile * call SetupEnvironment()
 
 """"""""""""""""""""
 " pathogen
+" install: mkdir -p ~/.vim/autoload ~/.vim/bundle && curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 """"""""""""""""""""
 execute pathogen#infect()
 syntax on
@@ -481,3 +494,6 @@ let g:go_version_warning = 0
 hi TabLineFill ctermfg=LightGreen ctermbg=DarkGreen
 hi TabLine ctermfg=Blue ctermbg=Yellow
 hi TabLineSel ctermfg=Red ctermbg=Yellow
+
+" alias
+cnoreabbrev mk make
