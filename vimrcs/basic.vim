@@ -67,11 +67,16 @@ command W w !sudo tee % > /dev/null
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => golang settings
+" install: curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
 call plug#begin()
 Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+" see: https://stackoverflow.com/questions/53657545/nerdtree-g-before-folder-and-file-names-osx-terminal-vim
+let g:NERDTreeNodeDelimiter = "\u00a0"
+let g:go_fmt_options = ''
 call plug#end()
+
 
 " disable syntax check, it takes long time for golang to check
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
@@ -104,7 +109,7 @@ endif
 set ruler
 
 " Height of the command bar
-set cmdheight=2
+set cmdheight=1
 
 " A buffer becomes hidden when it is abandoned
 set hid
@@ -221,6 +226,20 @@ set ai "Auto indent
 set si "Smart indent
 set nowrap "do not Wrap lines
 
+" set wrap for tex file
+augroup WrapLineInTeXFile
+	autocmd!
+	autocmd FileType tex setlocal wrap
+augroup END
+
+""""""""""""""""""""
+" move among wrapped lines
+""""""""""""""""""""
+noremap  <buffer> <silent> k gk
+noremap  <buffer> <silent> j gj
+noremap  <buffer> <silent> 0 g0
+noremap  <buffer> <silent> $ g$
+
 
 """"""""""""""""""""""""""""""
 " => Visual mode related
@@ -326,7 +345,7 @@ fun! CleanExtraSpaces()
 endfun
 
 if has("autocmd")
-    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
+    autocmd BufWritePre *.tex,*.go,*.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
 endif
 
 
@@ -442,8 +461,9 @@ endfunc
 " settings among different projects
 function! SetupEnvironment()
 	let l:path = expand('%:p')
-	if l:path =~ '/root/go/src/itos'
-	elseif l:path =~ '/root/git/csos'
+
+	if l:path =~ '/path/you/want'
+	elseif l:path =~ '/another/path/you/want'
 		setlocal ts=2 sw=2
 		set noexpandtab
 		set listchars=tab:\|\ 
@@ -454,3 +474,30 @@ function! SetupEnvironment()
 	endif
 endfunction
 autocmd! BufReadPost,BufNewFile * call SetupEnvironment()
+
+""""""""""""""""""""
+" pathogen
+" install: mkdir -p ~/.vim/autoload ~/.vim/bundle && curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+""""""""""""""""""""
+execute pathogen#infect()
+syntax on
+filetype plugin indent on
+
+""""""""""""""""""""
+" disable go-vim version warning
+""""""""""""""""""""
+let g:go_version_warning = 0
+
+""""""""""""""""""""
+" tab color settings
+""""""""""""""""""""
+hi TabLineFill ctermfg=LightGreen ctermbg=DarkGreen
+hi TabLine ctermfg=Blue ctermbg=Yellow
+hi TabLineSel ctermfg=Red ctermbg=Yellow
+
+" alias
+cnoreabbrev mk make
+cnoreabbrev te tabe 
+
+set complete+=kspell
+
